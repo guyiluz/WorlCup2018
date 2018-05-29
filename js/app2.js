@@ -1,7 +1,10 @@
-//var x = {"grupus":[{"groupId":0,"Countrys":["Russia","Saudi Arabia","Egypt","Uruguay"]},{"groupId":1,"Countrys":["Portugal","Spain","Morocco","Iran"]},{"groupId":2,"Countrys":["France","Australia","Peru","Denmark"]},{"groupId":3,"Countrys":["Argentina","Iceland","Croatia","Nigeria"]},{"groupId":4,"Countrys":["Brazil","Switzerland","Costa Rica","Serbia"]},{"groupId":5,"Countrys":["Germany","Mexico","Sweden","South Korea"]},{"groupId":6,"Countrys":["Belgium","Panama","Tunisia","England"]},{"groupId":7,"Countrys":["Poland","Senegal","Colombia","Japan"]}]};
-
 var id;
 var x;
+var userData = {
+    name: '',
+    email: ''
+  }
+var userDataJson;
 var startProcess = () => {
     fetch('https://worldgns2018.herokuapp.com/groups')
         .then(function(res){
@@ -21,6 +24,30 @@ var setStart = () => {
     $('#main-section').css('display', 'block');
 }
 
+//send the user data to the server and get id back
+$('#startBtn').click(function(){
+    userData.name = $('#nameInput').val();
+    userData.email = $('#emailInput').val();
+    userDataJson = JSON.stringify(userData);
+    
+    fetch('https://worldgns2018.herokuapp.com/api/addUser', {
+        method: 'POST',
+        body: userDataJson,
+        headers: new Headers({
+          'Content-Type': 'application/json'
+        })
+      }).then(data => data.json())
+      .then(response => {
+        id = response;
+        console.log('Success:', response);
+        $('.wait-bar').css("display", "block");
+        $('#startBtn').attr('disabled', 'disabled');
+        $('#showName').text("HI " + $("#nameInput").val());
+        startProcess();
+    });
+    
+    
+});
 
 var buildPage = () => {
     for(var i = 0 ; i < x.grupus.length ; i ++){
@@ -108,12 +135,7 @@ var buildPage = () => {
     pickWin();
 };
 
-$('#startBtn').click(function(){
-    $('.wait-bar').css("display", "block");
-    $('#startBtn').attr('disabled', 'disabled');
-    $('#showName').text("HI " + $("#nameInput").val());
-    startProcess();
-});
+
 
 var res = {
     groupss : [[],[],[],[],[],[],[],[]],
@@ -186,15 +208,7 @@ $('#submitBtn').click(function(){
     }
 });
 
-var userData = {
-    name: '',
-    email: ''
-  }
-var userDataJson;
+
   
-  $('#startBtn').click(function(){
-    userData.name = $('#nameInput').val();
-    userData.email = $('#emailInput').val();
-    userDataJson = JSON.stringify(userData);
-  });
+
   

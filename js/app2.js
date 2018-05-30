@@ -36,8 +36,9 @@ $('#startBtn').click(function(){
         headers: new Headers({
           'Content-Type': 'application/json'
         })
-      }).then(data => data.json())
+      }).then(data => data)
       .then(response => {
+        console.log(response.body)
         id = response;
         console.log('Success:', response);
         $('.wait-bar').css("display", "block");
@@ -148,7 +149,7 @@ var res = {
 
 var resJson;
 
-var createJson = () => {
+var createPicksJson = () => {
     for(var i = 0 ; i < 8 ; i++){
         for(var j = 0 ; j < 4 ; j++){
             res.groupss[i].push($('#group'+(i+1)+' li:nth('+j+')').text())
@@ -203,8 +204,18 @@ $('#submitBtn').click(function(){
         alert('not finished');
         console.log('alert')
     } else {
-        createJson();
+        createPicksJson();
         console.log('json');
+        /*fetch('https://worldgns2018.herokuapp.com/api/addUser', {
+            method: 'POST',
+            body: resJson,
+            headers: new Headers({
+              'Content-Type': 'application/json'
+            })
+          }).then(data => data)
+          .then(response => {
+            console.log(response.body)
+        });*/
     }
 });
 

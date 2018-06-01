@@ -36,9 +36,9 @@ $('#startBtn').click(function(){
         headers: new Headers({
           'Content-Type': 'application/json'
         })
-      }).then(data => data)
+      }).then(data => data.text())
       .then(response => {
-        console.log(response.body)
+        console.log(response)
         id = response;
         console.log('Success:', response);
         $('.wait-bar').css("display", "block");

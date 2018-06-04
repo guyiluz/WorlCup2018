@@ -87,6 +87,10 @@ body,html{
   list-style-position: inside;
 }
 
+ul .list-item{
+  list-style-type: none;
+}
+
 .stage-title{
   font-size: 16px;
   margin-left: 15px;

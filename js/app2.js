@@ -29,7 +29,8 @@ $('#startBtn').click(function(){
     userData.name = $('#nameInput').val();
     userData.email = $('#emailInput').val();
     userDataJson = JSON.stringify(userData);
-    
+    $('.wait-bar').css("display", "block");
+    $('#startBtn').attr('disabled', 'disabled');
     fetch('https://worldgns2018.herokuapp.com/api/addUser', {
         method: 'POST',
         body: userDataJson,
@@ -41,8 +42,6 @@ $('#startBtn').click(function(){
         console.log(response)
         id = response;
         console.log('Success:', response);
-        $('.wait-bar').css("display", "block");
-        $('#startBtn').attr('disabled', 'disabled');
         $('#showName').text("HI " + $("#nameInput").val());
         startProcess();
     });
@@ -139,6 +138,7 @@ var buildPage = () => {
 
 
 var res = {
+    userId: '',
     groupss : [[],[],[],[],[],[],[],[]],
     top16 : [],
     top8 : [],
@@ -170,6 +170,7 @@ var createPicksJson = () => {
         res.top2.push($('#semi' + i + ' .ui-selected').text());
     }
     res.top1 = $('#win').text();
+    res.userId = id;
     resJson = JSON.stringify(res);
 }
 
@@ -206,7 +207,7 @@ $('#submitBtn').click(function(){
     } else {
         createPicksJson();
         console.log('json');
-        /*fetch('https://worldgns2018.herokuapp.com/api/addUser', {
+        /*fetch('https://worldgns2018.herokuapp.com/api/setRes', {
             method: 'POST',
             body: resJson,
             headers: new Headers({

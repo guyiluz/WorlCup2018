@@ -207,7 +207,7 @@ $('#submitBtn').click(function(){
     } else {
         createPicksJson();
         console.log('json');
-        /*fetch('https://worldgns2018.herokuapp.com/api/setRes', {
+        fetch('https://worldgns2018.herokuapp.com/api/setRes', {
             method: 'POST',
             body: resJson,
             headers: new Headers({
@@ -216,7 +216,7 @@ $('#submitBtn').click(function(){
           }).then(data => data)
           .then(response => {
             console.log(response.body)
-        });*/
+        });
     }
 });
 

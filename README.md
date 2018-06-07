@@ -8,10 +8,21 @@ Post a json to
  https://worldgns2018.herokuapp.com/api/addUser
 
 exmple:{"email":test@test.com,name:"Bob"}
+*** Change res to userData
+if user exist:
 
-if the email is new the responed will be the user id
-if not it will be "Email is already listed"
+{
+        newUser:false,
+        id:id,
+        userBet:[]
+          }
 
+if user is new:
+
+{
+        newUser:true,
+        id:id,
+          }
 
 Get all the users :
 

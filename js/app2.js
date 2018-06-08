@@ -7,8 +7,8 @@ var userLoginData = {
 var userDataJson;
 var startProcess = () => {
     fetch('https://wwc2018.herokuapp.com/groups')
-        .then(function(userData){
-            return userData.text();
+        .then(function(grpData){
+            return grpData.text();
         })
         .then(function(data){
             //console.log(data);

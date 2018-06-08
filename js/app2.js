@@ -1,14 +1,14 @@
 var id;
 var x;
-var userData = {
+var userLoginData = {
     name: '',
     email: ''
   }
 var userDataJson;
 var startProcess = () => {
-    fetch('https://worldgns2018.herokuapp.com/groups')
-        .then(function(res){
-            return res.text();
+    fetch('https://wwc2018.herokuapp.com/groups')
+        .then(function(userData){
+            return userData.text();
         })
         .then(function(data){
             //console.log(data);
@@ -26,21 +26,21 @@ var setStart = () => {
 
 //send the user data to the server and get id back
 $('#startBtn').click(function(){
-    userData.name = $('#nameInput').val();
-    userData.email = $('#emailInput').val();
-    userDataJson = JSON.stringify(userData);
+    userLoginData.name = $('#nameInput').val();
+    userLoginData.email = $('#emailInput').val();
+    userLoginDataJson = JSON.stringify(userLoginData);
     $('.wait-bar').css("display", "block");
     $('#startBtn').attr('disabled', 'disabled');
-    fetch('https://worldgns2018.herokuapp.com/api/addUser', {
+    fetch('https://wwc2018.herokuapp.com/api/addUser', {
         method: 'POST',
-        body: userDataJson,
+        body: userLoginDataJson,
         headers: new Headers({
           'Content-Type': 'application/json'
         })
       }).then(data => data.text())
       .then(response => {
         console.log(response)
-        id = response;
+        id = JSON.parse(response).id;
         console.log('Success:', response);
         $('#showName').text("HI " + $("#nameInput").val());
         startProcess();
@@ -137,14 +137,16 @@ var buildPage = () => {
 
 
 
-var res = {
-    userId: '',
-    groupss : [[],[],[],[],[],[],[],[]],
-    top16 : [],
-    top8 : [],
-    top4 : [],
-    top2 : [],
-    top1 : ''
+var obj = {
+    id:'',
+    res: {    
+        groupss : [[],[],[],[],[],[],[],[]],
+        top16 : [],
+        top8 : [],
+        top4 : [],
+        top2 : [],
+        top1 : ''
+    }
 }
 
 var resJson;
@@ -152,26 +154,26 @@ var resJson;
 var createPicksJson = () => {
     for(var i = 0 ; i < 8 ; i++){
         for(var j = 0 ; j < 4 ; j++){
-            res.groupss[i].push($('#group'+(i+1)+' li:nth('+j+')').text())
+            obj.res.groupss[i].push($('#group'+(i+1)+' li:nth('+j+')').text())
         }
     }
     for(var i = 0 ; i < 8 ; i++){
         for(var j = 0 ; j < 2 ; j++){
-            res.top16.push($('#topSixteen'+(i+1)+' li:nth('+j+')').text())
+            obj.res.top16.push($('#topSixteen'+(i+1)+' li:nth('+j+')').text())
         }
     }
     for(var i = 1 ; i < 9 ; i++){
-            res.top8.push($('#topSixteen' + i + ' .ui-selected').text());
+        obj.res.top8.push($('#topSixteen' + i + ' .ui-selected').text());
     }
     for(var i = 1 ; i < 5 ; i++){
-        res.top4.push($('#qtr' + i + ' .ui-selected').text());
+        obj.res.top4.push($('#qtr' + i + ' .ui-selected').text());
     }
     for(var i = 1 ; i < 3 ; i++){
-        res.top2.push($('#semi' + i + ' .ui-selected').text());
+        obj.res.top2.push($('#semi' + i + ' .ui-selected').text());
     }
-    res.top1 = $('#win').text();
-    res.userId = id;
-    resJson = JSON.stringify(res);
+    obj.res.top1 = $('#win').text();
+    obj.id = id;
+    resJson = JSON.stringify(obj);
 }
 
 $('#submitBtn').click(function(){
@@ -207,15 +209,15 @@ $('#submitBtn').click(function(){
     } else {
         createPicksJson();
         console.log('json');
-        fetch('https://worldgns2018.herokuapp.com/api/setRes', {
+        fetch('https://wwc2018.herokuapp.com/api/setRes', {
             method: 'POST',
             body: resJson,
             headers: new Headers({
               'Content-Type': 'application/json'
             })
-          }).then(data => data)
+          }).then(aaa => aaa.text())
           .then(response => {
-            console.log(response.body)
+            console.log(response)
         });
     }
 });

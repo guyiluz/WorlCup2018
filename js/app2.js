@@ -1,6 +1,6 @@
 var id;
 var x;
-var userLoginData = {
+var userLogin = {
     name: '',
     email: ''
   }
@@ -26,28 +26,98 @@ var setStart = () => {
 
 //send the user data to the server and get id back
 $('#startBtn').click(function(){
-    userLoginData.name = $('#nameInput').val();
-    userLoginData.email = $('#emailInput').val();
-    userLoginDataJson = JSON.stringify(userLoginData);
+    userLogin.name = $('#nameInput').val();
+    userLogin.email = $('#emailInput').val();
+    userLoginJson = JSON.stringify(userLogin);
     $('.wait-bar').css("display", "block");
     $('#startBtn').attr('disabled', 'disabled');
+
     fetch('https://wwc2018.herokuapp.com/api/addUser', {
         method: 'POST',
-        body: userLoginDataJson,
+        body: userLoginJson,
         headers: new Headers({
           'Content-Type': 'application/json'
         })
       }).then(data => data.text())
-      .then(response => {
-        console.log(response)
-        id = JSON.parse(response).id;
-        console.log('Success:', response);
+      .then(userData => {
+        console.log(userData)
+        id = JSON.parse(userData).id;
+        console.log('Success:', userData);
         $('#showName').text("HI " + $("#nameInput").val());
-        startProcess();
+        
+        if(JSON.parse(userData).newUser) {
+            startProcess();
+        } else { 
+            if(localStorage.getItem('localUserBet') != null && JSON.parse(localStorage.getItem('localUserBet')).id == id){
+                var loclUsrBet = JSON.parse(localStorage.getItem('localUserBet'));
+                console.log(loclUsrBet);
+                showUserBet(loclUsrBet.res)
+            } else if (JSON.parse(userData).userBet.constructor === Array){
+                if (JSON.parse(userData).userBet.length == 0){
+                    startProcess();
+                }
+            } else if (JSON.parse(userData).userBet.constructor === Object){
+                if (JSON.parse(userData).userBet.groupss.length == 0){
+                    startProcess();
+                } else {
+                console.log("showbet")
+                showUserBet(JSON.parse(userData).userBet);
+            }
+        }
+    }
+        
     });
-    
-    
+
 });
+
+
+var sortGroups = function(groupId, top16A, top16B){
+    $(top16A+" li:nth-child(1)").html($(groupId+" li:nth-child(1)").html());
+    $(top16B+" li:nth-child(2)").html($(groupId+" li:nth-child(2)").html());
+    $(groupId).sortable({
+        update: function( event, ui ) {
+            var x = $(groupId+" li:nth-child(1)").html();
+            var y = $(groupId+" li:nth-child(2)").html();
+            $(top16A+" li:nth-child(1)").html(x);
+            $(top16B+" li:nth-child(2)").html(y);
+        }
+    })
+};
+
+var pickQtr = function(top16Id, qtrId, c){
+    $(top16Id).selectable({
+        selected: function( event, ui ) {	
+            $(qtrId +' li:nth-child('+ c +')').html(ui.selected.textContent);
+        }
+});
+};
+
+var pickSemi = function(qtrId, semiId, c){
+    $(qtrId).selectable({
+        selected: function( event, ui ) {	
+            $(semiId +' li:nth-child('+ c +')').html(ui.selected.textContent);
+        }
+    });
+};
+
+var pickFin = function(semiId,finId, c){
+    $(semiId).selectable({
+        selected: function( event, ui ) {	
+            $(finId +' li:nth-child('+ c +')').html(ui.selected.textContent);
+        }
+
+    });
+}
+var pickWin = function(){
+    $('#fin').selectable({
+        selected: function( event, ui ) {	
+            $('#win').html(ui.selected.textContent);
+            $('#winSquare').css('display', 'block');
+        }
+});
+}
+
+
 
 var buildPage = () => {
     for(var i = 0 ; i < x.grupus.length ; i ++){
@@ -55,57 +125,6 @@ var buildPage = () => {
             $('#group' + (i + 1) + ' li:nth-child('+ (j + 1) +')').text(x.grupus[i].Countrys[j]);
         }
     }
-
-
-
-
-    var sortGroups = function(groupId, top16A, top16B){
-        $(top16A+" li:nth-child(1)").html($(groupId+" li:nth-child(1)").html());
-        $(top16B+" li:nth-child(2)").html($(groupId+" li:nth-child(2)").html());
-        $(groupId).sortable({
-            update: function( event, ui ) {
-                var x = $(groupId+" li:nth-child(1)").html();
-                var y = $(groupId+" li:nth-child(2)").html();
-                $(top16A+" li:nth-child(1)").html(x);
-                $(top16B+" li:nth-child(2)").html(y);
-            }
-        })
-    };
-
-    var pickQtr = function(top16Id, qtrId, c){
-        $(top16Id).selectable({
-            selected: function( event, ui ) {	
-                $(qtrId +' li:nth-child('+ c +')').html(ui.selected.textContent);
-            }
-    });
-    };
-
-    var pickSemi = function(qtrId, semiId, c){
-        $(qtrId).selectable({
-            selected: function( event, ui ) {	
-                $(semiId +' li:nth-child('+ c +')').html(ui.selected.textContent);
-            }
-        });
-    };
-
-    var pickFin = function(semiId,finId, c){
-        $(semiId).selectable({
-            selected: function( event, ui ) {	
-                $(finId +' li:nth-child('+ c +')').html(ui.selected.textContent);
-            }
-
-        });
-    }
-    var pickWin = function(){
-        $('#fin').selectable({
-            selected: function( event, ui ) {	
-                $('#win').html(ui.selected.textContent);
-                $('#winSquare').css('display', 'block');
-            }
-    });
-    }
-
-
     sortGroups("#group1", "#topSixteen1", "#topSixteen3");
     sortGroups("#group2", "#topSixteen3", "#topSixteen1");
     sortGroups("#group3", "#topSixteen2", "#topSixteen4");
@@ -135,7 +154,40 @@ var buildPage = () => {
     pickWin();
 };
 
+var showUserBet = (obj) =>{
+    setStart();
+    for (var i = 0 ; i < 8 ; i++){
+        for(var j = 0 ; j < 4 ; j++){
+            $('#group' + (i + 1) + ' li:nth-child('+ (j + 1) +')').text(obj.groupss[i][j]);
+        }
+    }
 
+    for (var i = 0 ; i < 8 ; i++){
+        for(var j = 0 ; j < 2 ; j++){
+            $('#topSixteen' + (i + 1) + ' li:nth-child('+ (j + 1) +')').text(obj.top16[j+i+1*i]);
+        }
+    }
+
+    for (var i = 0 ; i < 4 ; i++){
+        for(var j = 0 ; j < 2 ; j++){
+            $('#qtr' + (i + 1) + ' li:nth-child('+ (j + 1) +')').text(obj.top8[j+i+1*i]);
+        }
+    }
+
+    for (var i = 0 ; i < 2 ; i++){
+        for(var j = 0 ; j < 2 ; j++){
+            $('#semi' + (i + 1) + ' li:nth-child('+ (j + 1) +')').text(obj.top4[j+i+1*i]);
+        }
+    }
+
+    for (var i = 0 ; i < 2 ; i++){
+            $('#fin li:nth-child('+ (i + 1) +')').text(obj.top2[i]);
+    }
+
+    $('#winSquare').css('display', 'block');
+    $('#win').text(obj.top1);
+
+}
 
 var obj = {
     id:'',
@@ -209,6 +261,7 @@ $('#submitBtn').click(function(){
     } else {
         createPicksJson();
         console.log('json');
+        localStorage.setItem('localUserBet', resJson);
         fetch('https://wwc2018.herokuapp.com/api/setRes', {
             method: 'POST',
             body: resJson,

@@ -187,6 +187,8 @@ var showUserBet = (obj) =>{
     $('#winSquare').css('display', 'block');
     $('#win').text(obj.top1);
 
+    $('#submitBtn').attr('disabled', 'disabled');
+
 }
 
 var obj = {

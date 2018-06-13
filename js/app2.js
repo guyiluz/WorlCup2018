@@ -56,8 +56,8 @@ $('#startBtn').click(function(){
             if(JSON.parse(userData).newUser) {
                 startProcess();
             } else { 
-                if(localStorage.getItem('localUserBet') != null && JSON.parse(localStorage.getItem('localUserBet')).id == id){
-                    var loclUsrBet = JSON.parse(localStorage.getItem('localUserBet'));
+                if(localStorage.getItem('localUserBet2') != null && JSON.parse(localStorage.getItem('localUserBet2')).id == id){
+                    var loclUsrBet = JSON.parse(localStorage.getItem('localUserBet2'));
                     console.log(loclUsrBet);
                     showUserBet(loclUsrBet.res)
                 } else if (JSON.parse(userData).userBet.constructor === Array){
@@ -275,7 +275,7 @@ $('#submitBtn').click(function(){
         } else {
             createPicksJson();
             console.log('json');
-            localStorage.setItem('localUserBet', resJson);
+            localStorage.setItem('localUserBet2', resJson);
             fetch('https://wwc2018.herokuapp.com/api/setRes', {
                 method: 'POST',
                 body: resJson,

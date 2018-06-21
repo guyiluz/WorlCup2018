@@ -127,7 +127,10 @@ var pickWin = function(){
 });
 }
 
-
+var topFunction = () => {
+    document.body.scrollTop = 0; // For Safari
+    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+}
 
 var buildPage = () => {
     for(var i = 0 ; i < x.grupus.length ; i ++){
@@ -285,6 +288,7 @@ $('#submitBtn').click(function(){
             }).then(aaa => aaa.text())
             .then(response => {
                 console.log(response)
+                topFunction();
                 $('#main-section').css('display', 'none');
                 $('.tnkuGif').css('display', 'block');
             });

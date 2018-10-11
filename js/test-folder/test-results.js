@@ -1,4 +1,14 @@
-{
+var actRes;
+
+getActRes = () => {
+    fetch("https://raw.githubusercontent.com/lsv/fifa-worldcup-2018/master/data.json")
+    .then(data=>data.json())
+    .then((data)=>{
+        actRes = data;
+    })
+}
+
+var teams = {
 	1: "Russia",
 	2: "Saudi Arabia",
 	3: "Egypt",
